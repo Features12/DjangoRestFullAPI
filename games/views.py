@@ -76,5 +76,3 @@ def game_list(request):
 
 
 
-
-
