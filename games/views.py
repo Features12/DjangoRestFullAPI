@@ -73,6 +73,8 @@ from .api.serializers import GameSerializer, ScoreSerializer, GameCategorySerial
 #             games_serializer.save()
 #             return Response(games_serializer.data, status=status.HTTP_201_CREATED)
 #         return Response(games_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
 class GameList(generics.ListCreateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
