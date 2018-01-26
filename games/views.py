@@ -8,12 +8,14 @@ from rest_framework.parsers import JSONParser
 from rest_framework import status, generics, reverse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+from .permissions import IsOwnerOrReadOnly
 from .models import Game, PlayerScore, Player, GameCategory
 from django.contrib.auth.models import User
 from .api.serializers import (GameSerializer, ScoreSerializer, GameCategorySerializer, PlayerSerializer,
                               PlayerScoreSerializer, UserSerializer)
 from rest_framework import permissions
-from .permissions import IsOwnerOrReadOnly
+from rest_framework.throttling import ScopedRateThrottle
 
 
 
@@ -83,6 +85,10 @@ class GameList(generics.ListCreateAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     name = 'game-list'
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+    )
 
     def perform_create(self, serializer):
         serializer.save(owner = self.request.user)
@@ -93,6 +99,8 @@ class GameCategoryList(generics.ListCreateAPIView):
     queryset = GameCategory.objects.all()
     serializer_class = GameCategorySerializer
     name = 'gamecategory-list'
+    throttle_scope = 'game-categories'
+    throttle_classes = (ScopedRateThrottle, )
 
 
 
@@ -113,12 +121,18 @@ class GameCategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = GameCategory.objects.all()
     serializer_class = GameCategorySerializer
     name = 'gamecategory-detail'
+    throttle_scope = 'game-categories'
+    throttle_classes = (ScopedRateThrottle,)
 
 
 class GameDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Game.objects.all()
     serializer_class = GameSerializer
     name = 'game-detail'
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+    )
 
 
 class PlayerDetail(generics.RetrieveUpdateDestroyAPIView):
