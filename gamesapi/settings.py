@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'games.apps.GamesConfig',
     'django_filters',
+    'crispy_forms',
+    'django_nose',
 ]
 
 MIDDLEWARE = [
@@ -140,5 +142,21 @@ REST_FRAMEWORK = {
         'anon':'5/hour',
         'user':'20/hour',
         'game_category':'30/hour',
-    }
+    },
+
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ),
 }
+
+
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+
+NOSE_ARGS = [
+    '--with-coverage',
+    '--cover-erase',
+    '--cover-inclusive',
+    '--cover-package=games',
+]
